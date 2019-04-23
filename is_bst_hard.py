@@ -2,7 +2,7 @@
 
 import sys, threading
 sys.setrecursionlimit(10**6) # max depth of recursion
-threading.stack_size(2**30)  # new thread will get stack of such size
+threading.stack_size(2**27)  # new thread will get stack of such size
 
 
 class TreeNode:
@@ -11,6 +11,12 @@ class TreeNode:
         self.left_child = l_child
         self.right_child = r_child
         self.parent = None
+
+    def is_left_child(self):
+        return self.parent and self.parent.left_child == self
+
+    def is_right_child(self):
+        return self.parent and self.parent.right_child == self
 
 
 class TreeOrders:
@@ -79,32 +85,21 @@ class TreeOrders:
                 self.build_array[new_node.right_child] = cur_ind
 
 
-def is_bst(root, min_key=-sys.maxsize - 1, max_key=sys.maxsize):
+def is_bst(root, min_key=-sys.maxsize-1, max_key=sys.maxsize):
     if root is None:
         return True
 
-    if (min_key < root.data <= max_key or
-        is_bst(root.left_child, min_key, root.data) and is_bst(root.right_child, root.data, max_key)):
-        return True
-    else:
+    if (root.data < min_key) or (root.data >= max_key):
         return False
 
-    
-def is_bstc(root, min_key=-sys.maxsize - 1, max_key=sys.maxsize):
-    if root is None:
-        return True
-    
-    if(root.data < min_key) or (root.data >= max_key):
-        return False
-    
-    return is_bstc(root.left_child, min_key, root.data) and is_bst(root.right_child, root.data, max_key)
+    return is_bst(root.left_child, min_key, root.data) and is_bst(root.right_child, root.data, max_key)
 
 
 def main():
     tree = TreeOrders()
     tree.read()
 
-    if is_bstc(tree.root):
+    if is_bst(tree.root):
         print("CORRECT")
     else:
         print("INCORRECT")
